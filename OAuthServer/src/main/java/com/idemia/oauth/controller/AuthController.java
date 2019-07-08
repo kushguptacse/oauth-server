@@ -25,7 +25,6 @@ import com.idemia.oauth.response.RequestModel;
 import com.idemia.oauth.response.ResponseModel;
 
 @Controller
-//@RequestMapping("/oauth")
 public class AuthController {
 	// http://localhost:8080/oauth/authorize?response_type=code&client_id=epfo&redirect_url=http://www.google.com
 	@Autowired
