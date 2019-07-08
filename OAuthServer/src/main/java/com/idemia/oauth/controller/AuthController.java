@@ -24,9 +24,9 @@ import com.idemia.oauth.controller.service.ClientDetailService;
 import com.idemia.oauth.response.RequestModel;
 import com.idemia.oauth.response.ResponseModel;
 
+// http://localhost:8080/oauth/authorize?response_type=code&client_id=epfo&redirect_url=http://www.google.com
 @Controller
 public class AuthController {
-	// http://localhost:8080/oauth/authorize?response_type=code&client_id=epfo&redirect_url=http://www.google.com
 	@Autowired
 	private ClientDetailService clientDetailService;
 
@@ -36,7 +36,7 @@ public class AuthController {
 	@GetMapping(value = "/oauth/authorize")
 	public ModelAndView authorize(@RequestParam(value = "response_type", required = true) String responseType,
 			@RequestParam(value = "client_id", required = true) String clientId, @RequestParam(value = "redirect_url", required = true) String redirectUrl,
-			HttpSession session,Model model) throws CustomMessageException {
+			HttpSession session, Model model) throws CustomMessageException {
 
 		String url = "/login";
 		if (session.isNew()) {
@@ -45,7 +45,7 @@ public class AuthController {
 			if (optional.isPresent()) {
 				// add request model in session
 				session.setAttribute("clientId", new RequestModel(responseType, clientId, redirectUrl));
-				  model.addAttribute("userCollection", new UserDataCollection());
+				model.addAttribute("userCollection", new UserDataCollection());
 			} else {
 				session.invalidate();
 				throw new CustomMessageException("Invalid client id");
@@ -67,11 +67,11 @@ public class AuthController {
 	public void saveClient(@RequestBody ClientDetailsCollection clientDetailsCollection) {
 		clientDetailService.saveClient(clientDetailsCollection);
 	}
-	
+
 	@PostMapping(value = "/oauth/login")
 	public ModelAndView login(@ModelAttribute UserDataCollection userCollection, HttpSession session) throws CustomMessageException {
 		RequestModel requestModel = (RequestModel) session.getAttribute("clientId");
-		boolean res = authService.validateUser(userCollection,requestModel);
+		boolean res = authService.validateUser(userCollection, requestModel);
 		ResponseModel model = new ResponseModel();
 		if (res) {
 			// TODO - generate token and code
@@ -80,7 +80,7 @@ public class AuthController {
 			model.setRefreshToken("");
 			Random rand = new Random();
 			int num = rand.nextInt(90000) + 10000;
-			model.setCode(num+"");
+			model.setCode(num + "");
 			session.setAttribute("code", model);
 		}
 		String url = "redirect:" + requestModel.getRedirectUrl() + "?code=" + model.getCode();
